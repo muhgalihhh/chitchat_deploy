@@ -11,7 +11,6 @@ export const loginUser = async (req, res) => {
     if (!user || !isPasswordCorrect) {
       return res.status(400).json({ message: 'Invalid username or password' });
     }
-
     // generate JWT token
     generateTokenAndSetCookie(user._id, res);
     res.status(200).json({
@@ -44,7 +43,7 @@ export const signupUser = async (req, res) => {
       return res.status(400).json({ message: "Password didn't match" });
     }
 
-    const user = await User.findOne({ username });
+    const user = await User.findOne({ username }); // check if user already exists
     if (user) {
       return res.status(400).json({ message: 'Username already exists' });
     }

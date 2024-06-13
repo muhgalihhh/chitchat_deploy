@@ -1,20 +1,15 @@
+import useGetConversation from '../../hooks/useGetConversation';
 import Conversation from './Conversation';
 
 const ConversationList = () => {
+  const { loading, conversation } = useGetConversation();
+  console.log('conversation:', conversation);
   return (
-    <div className="p-5 flex flex-col overflow-y-auto h-2/3 shadow-md rounded-md">
-      <Conversation />
-      <Conversation />
-      <Conversation />
-      <Conversation />
-      <Conversation />
-      <Conversation />
-      <Conversation />
-      <Conversation />
-      <Conversation />
-      <Conversation />
-      <Conversation />
-      <Conversation />
+    <div className="p-5 flex flex-col">
+      {conversation.map((user, idx) => (
+        <Conversation key={user._id} conversation={user} lastIdx={idx === conversation.length - 1} />
+      ))}
+      {loading ? <span className="loading loading-infinity loading-md"></span> : null}
     </div>
   );
 };

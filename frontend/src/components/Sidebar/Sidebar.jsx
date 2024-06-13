@@ -1,15 +1,44 @@
+import { useState } from 'react';
+import ModalLogout from '../Modal/ModalLogout';
 import ConversationList from './ConversationList';
 import LogoutButton from './LogoutButton';
 import SearchInput from './SearchInput';
+
 const Sidebar = () => {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const handleOpenModal = () => {
+    setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+  };
+
   return (
-    <div className="flex flex-col bg-white hidden md:block lg:w-1/3 xl:w-1/4 h-full p-4 border-slate-400 border-r-2">
-      <SearchInput />
-      <div className="divider px-3"></div>
-      <ConversationList />
-      <div className="divider px-3"></div>
-      <LogoutButton />
-    </div>
+    <>
+      {/* SearchInput Component */}
+      <div className="mb-1">
+        <SearchInput />
+      </div>
+
+      {/* Divider */}
+      <div className="divider px-3 mb-1"></div>
+
+      {/* ConversationList Component */}
+      <div className="flex-4 mb-1 overflow-y-auto scrollbar shadow-md rounded-md">
+        <ConversationList />
+      </div>
+
+      {/* Divider */}
+      <div className="divider px-3 mb-4"></div>
+
+      {/* LogoutButton Component */}
+      <div className="mb-1">
+        <LogoutButton onOpenModal={handleOpenModal} />
+        <ModalLogout isOpen={isModalOpen} onClose={handleCloseModal} />
+      </div>
+    </>
   );
 };
 export default Sidebar;
