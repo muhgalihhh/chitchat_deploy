@@ -17,18 +17,13 @@ const useSignup = () => {
         body: JSON.stringify({ fullName, username, password, confirmPassword, gender }),
       });
       const data = await res.json();
-      const error = data.message;
-      console.log(error);
-      if (!data.ok) {
-        throw new Error(error);
-      }
       toast.success('Signup Successful');
       // console.log(data);
       localStorage.setItem('chat-user', JSON.stringify(data));
       // call setAuthUser from context
       setAuthUser(data);
     } catch (error) {
-      toast.error('error.message');
+      toast.error(error.message);
     } finally {
       setLoading(false);
     }

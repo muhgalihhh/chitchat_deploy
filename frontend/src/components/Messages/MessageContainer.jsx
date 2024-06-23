@@ -64,7 +64,7 @@ const NoChatSelected = () => {
   const { authUser } = useAuthContext();
   return (
     <div className="flex flex-col items-center justify-center h-full">
-      <h2 className="text-slate-500 text-2xl font-semibold">Hallo `"{authUser.fullName}"`, Select a chat to start messaging</h2>
+      <h2 className="text-slate-500 text-2xl font-semibold">Hallo "{authUser.fullName}", Select a chat to start messaging</h2>
     </div>
   );
 };
