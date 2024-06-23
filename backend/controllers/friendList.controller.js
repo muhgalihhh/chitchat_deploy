@@ -1,6 +1,8 @@
 import FriendList from '../models/friendList.model.js';
 
-export const getFriends = async (req, res) => {};
+export const getFriends = async (req, res) => {
+  console.log('tes');
+};
 
 export const reqFriend = async (req, res) => {};
 
