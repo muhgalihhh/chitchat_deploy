@@ -7,7 +7,7 @@ import messageRoutes from './routes/message.routes.js';
 import groupRoutes from './routes/group.routes.js';
 import groupMessageRoutes from './routes/groupMessage.routes.js';
 import userRoutes from './routes/user.routes.js';
-import friendListRoutes from './routes/friendList.routes.js';
+import friendshipRoutes from './routes/friendship.routes.js';
 import { app, server } from './socket/socket.js';
 
 dotenv.config();
@@ -21,7 +21,7 @@ app.use('/api/messages', messageRoutes); // middleware
 app.use('/api/users', userRoutes); // middleware
 app.use('/api/groups', groupRoutes); // middleware
 app.use('/api/group-messages', groupMessageRoutes); // middleware
-app.use('/api/friend-list', friendListRoutes); // middleware
+app.use('/api/friend-list', friendshipRoutes); // middleware
 
 // app.get('/', (req, res) => {
 //   // root route http://localhost:5000/

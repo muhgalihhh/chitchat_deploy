@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
 
-const friendListSchema = new mongoose.Schema(
+const friendshipSchema = new mongoose.Schema(
   {
     userId: {
       type: mongoose.Schema.Types.ObjectId,
@@ -22,6 +22,6 @@ const friendListSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-const FriendList = mongoose.model('FriendList', friendListSchema);
+const Friendship = mongoose.model('Friendship', friendshipSchema);
 
-export default FriendList;
+export default Friendship;
