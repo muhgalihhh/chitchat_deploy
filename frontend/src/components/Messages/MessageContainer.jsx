@@ -37,7 +37,7 @@ const MessageContainer = ({ onBackClick }) => {
             <div className="bg-slate-500 flex items-center rounded-md px-5 justify-between">
               <div className="flex items-center">
                 <button className="md:hidden" onClick={hideMessages}>
-                  Back
+                  <i className="fa-solid fa-arrow-left text-white"></i>
                 </button>
                 <img src={selectedConversation.profilePicture} alt="" className="w-10 h-10 rounded-full m-3" />
                 <h2 className="text-white text-xl font-semibold p-3">{selectedConversation.fullName}</h2>
