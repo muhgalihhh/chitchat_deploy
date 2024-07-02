@@ -1,6 +1,7 @@
 import Group from '../models/group.model.js';
 import GroupMessage from '../models/groupMessage.model.js';
-import { getGroupSocketId, io } from '../socket/socket.js';
+import mongoose from 'mongoose';
+import { io } from '../socket/socket.js';
 
 export const sendGroupMessage = async (req, res) => {
   try {
@@ -21,17 +22,18 @@ export const sendGroupMessage = async (req, res) => {
     if (newMessage) {
       group.messages.push(newMessage._id);
     }
-    // await newMessage.save();
-    // await conversation.save();
 
-    // this will run in parallel
+    // save newMessage
     await newMessage.save();
 
     // SOCKET IO FUNCQIONALITY TO BE ADDED HERE
-    const groupSocketId = getGroupSocketId(groupId);
-    if (groupSocketId) {
-      io.to(groupSocketId).emit('newMessage', newMessage);
-    }
+    // Emit the new message to the group
+    io.to(groupId).emit('newMessage', {
+      groupId,
+      senderId,
+      message,
+      createdAt: message.createdAt,
+    });
     res.status(201).json(newMessage);
   } catch (error) {
     console.log('Error in sendMessage', error);
@@ -40,13 +42,19 @@ export const sendGroupMessage = async (req, res) => {
 };
 
 export const getGroupMessages = async (req, res) => {
-  try {
-    const { id: userToChatId } = req.params;
-    const senderId = req.user._id;
+  const { id: groupId } = req.params;
 
-    const conversation = await Conversation.findOne({
-      participants: { $all: [senderId, userToChatId] },
-    }).populate('messages'); // NOT REFERENCE BUT ACTUAL MESSAGES
+  if (!mongoose.Types.ObjectId.isValid(groupId)) {
+    return res.status(400).json({ message: 'Invalid group ID' });
+  }
+  try {
+    // Check if the group exists
+    const group = await Group.findById(groupId);
+    if (!group) {
+      return res.status(404).json({ message: 'Group not found' });
+    }
+    // Get messages from the group
+    const conversation = await Group.findById(groupId).populate('messages'); // NOT REFERENCE BUT ACTUAL MESSAGES
 
     if (!conversation) return res.status(200).json([]);
 
