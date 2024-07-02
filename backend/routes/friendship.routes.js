@@ -5,8 +5,8 @@ import protectRoute from '../middleware/protectRoute.js';
 const router = express.Router();
 
 router.get('/', protectRoute, getFriends);
-router.post('/:id', protectRoute, reqFriend);
-router.post('/add/:id', protectRoute, addFriend);
-router.post('/reject/:id', protectRoute, rejectFriend);
+router.post('/', protectRoute, reqFriend);
+router.post('/add', protectRoute, addFriend);
+router.post('/reject', protectRoute, rejectFriend);
 
 export default router;

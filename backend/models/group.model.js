@@ -16,6 +16,13 @@ const groupSchema = new mongoose.Schema(
       type: String,
       default: '',
     },
+    messages: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'GroupMessage',
+        default: [],
+      },
+    ],
     // createdAt, updatedAt => Member since <createdAt>
   },
   { timestamps: true }

@@ -1,11 +1,13 @@
 import Friendship from '../models/friendship.model.js';
+import mongoose from 'mongoose';
 
 export const getFriends = async (req, res) => {
+  const userId = req.user._id;
   try {
     const friendsDetails = await Friendship.aggregate([
       {
         $match: {
-          $or: [{ userId: mongoose.Types.ObjectId(loggedInUserId) }, { friendId: mongoose.Types.ObjectId(loggedInUserId) }],
+          $or: [{ userId: userId }, { friendId: userId }],
           status: true,
         },
       },
@@ -22,7 +24,7 @@ export const getFriends = async (req, res) => {
               },
             },
             {
-              $match: { _id: { $ne: mongoose.Types.ObjectId(loggedInUserId) } },
+              $match: { _id: { $ne: userId } },
             },
           ],
           as: 'friendDetails',
@@ -32,23 +34,23 @@ export const getFriends = async (req, res) => {
       { $project: { _id: 0, friendDetails: 1 } },
     ]);
 
-    console.log(friendsDetails);
-    return friendsDetails;
+    res.status(201).json({ friendsDetails });
   } catch (err) {
-    console.error(err);
+    res.status(500).json({ message: 'Internal Server Error', error: err.messsage });
     throw err;
   }
 };
 
 export const reqFriend = async (req, res) => {
-  const { userId, friendId } = req.body;
+  const userId = req.user._id;
+  const { friendId } = req.body;
 
   if (!mongoose.Types.ObjectId.isValid(userId) || !mongoose.Types.ObjectId.isValid(friendId)) {
     return res.status(400).json({ message: 'Invalid user ID or friend ID' });
   }
 
   try {
-    // Check if the friendship already exists
+    // Check if the friendship already existsj
     const existingFriendship = await Friendship.findOne({
       $or: [
         { userId, friendId },
@@ -75,7 +77,8 @@ export const reqFriend = async (req, res) => {
 };
 
 export const addFriend = async (req, res) => {
-  const { userId, friendId } = req.body;
+  const userId = req.user._id;
+  const { friendId } = req.body;
 
   if (!mongoose.Types.ObjectId.isValid(userId) || !mongoose.Types.ObjectId.isValid(friendId)) {
     return res.status(400).json({ message: 'Invalid user ID or friend ID' });
@@ -104,7 +107,8 @@ export const addFriend = async (req, res) => {
 };
 
 export const rejectFriend = async (req, res) => {
-  const { userId, friendId } = req.body;
+  const userId = req.user._id;
+  const { friendId } = req.body;
 
   if (!mongoose.Types.ObjectId.isValid(userId) || !mongoose.Types.ObjectId.isValid(friendId)) {
     return res.status(400).json({ message: 'Invalid user ID or friend ID' });
@@ -127,3 +131,5 @@ export const rejectFriend = async (req, res) => {
     res.status(500).json({ message: 'Internal server error', error: err.message });
   }
 };
+
+export const searchFriend = async (req, res) => {};
