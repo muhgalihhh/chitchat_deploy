@@ -34,17 +34,17 @@ const MessageContainer = ({ onBackClick }) => {
           <NoChatSelected />
         ) : (
           <>
-            <div className="bg-slate-500 flex items-center rounded-md px-5 justify-between">
+            <div className="bg-slate-500 flex items-center rounded-md p-1 justify-between">
               <div className="flex items-center">
                 <button className="md:hidden" onClick={hideMessages}>
                   <i className="fa-solid fa-arrow-left text-white"></i>
                 </button>
-                <img src={selectedConversation.profilePicture} alt="" className="w-10 h-10 rounded-full m-3" />
-                <h2 className="text-white text-xl font-semibold p-3">{selectedConversation.fullName}</h2>
+                <img src={selectedConversation.profilePicture} alt="" className="w-7 h-7 rounded-full mx-2" />
+                <h2 className="text-white text-md font-semibold p-3">{selectedConversation.fullName}</h2>
               </div>
-              <div className="ml-auto bg-slate-600 rounded-md">
-                <button className="btn btn-square bg-transparent" onClick={handleOpenModal}>
-                  <HiDotsVertical style={{ color: 'white', fontSize: '1.5rem' }} />
+              <div className="ml-auto bg-slate-600 rounded-md  hover:bg-slate-500 hover:border-white hover:border-2 hover:rounded-md mr-1">
+                <button className="bg-transparent p-3" onClick={handleOpenModal}>
+                  <HiDotsVertical style={{ color: 'white', fontSize: '1rem' }} />
                 </button>
               </div>
             </div>
