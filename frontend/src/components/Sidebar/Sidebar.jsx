@@ -13,7 +13,7 @@ const Sidebar = () => {
       <div className="divider px-3 mb-1"></div>
 
       {/* ConversationList Component */}
-      <div className="flex-4 mb-1 overflow-y-auto scrollbar shadow-md rounded-md">
+      <div className="flex-4 mb-1 overflow-y-auto scrollbar shadow-md rounded-md h-full p-2">
         <ConversationList />
       </div>
 
