@@ -89,4 +89,28 @@ export const addParticipantToGroup = async (req, res) => {
   }
 };
 
-export const leaveGroup = async (req, res) => {};
+export const leaveGroup = async (req, res) => {
+  try {
+    const { groupId } = req.params;
+    const loggedInUserId = req.user._id;
+
+    // Find the group and update it to remove the user
+    const group = await Group.findByIdAndUpdate(groupId, { $pull: { participants: loggedInUserId } }, { new: true }).populate('participants', 'name'); // Populate participants with name
+
+    if (!group) {
+      return res.status(404).json({ message: 'Group not found' });
+    }
+
+    // // Emit the event to notify other users in the group
+    // req.io.to(groupId).emit('userLeftGroup', {
+    //   groupId,
+    //   userId: loggedInUserId,
+    //   participants: group.participants
+    // });
+
+    res.status(200).json(group);
+  } catch (error) {
+    console.log('Error in leaveGroup controller: ', error.message);
+    res.status(500).json({ message: error.message });
+  }
+};
