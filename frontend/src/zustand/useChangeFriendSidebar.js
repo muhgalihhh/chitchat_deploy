@@ -4,7 +4,7 @@ import { persist } from 'zustand/middleware';
 const useChangeFriendSidebar = create(
   persist(
     (set) => ({
-      isShowAddFriend: false,
+      isShowAddFriend: true,
       isShowNotifications: false,
 
       showAddFriend: () => set({ isShowAddFriend: true, isShowNotifications: false }),

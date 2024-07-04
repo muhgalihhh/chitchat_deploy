@@ -1,4 +1,5 @@
 import Friendship from '../models/friendship.model.js';
+import User from '../models/user.model.js';
 import mongoose from 'mongoose';
 
 export const getFriends = async (req, res) => {
@@ -26,17 +27,20 @@ export const getFriends = async (req, res) => {
             {
               $match: { _id: { $ne: userId } },
             },
+            {
+              $project: { _id: 1, username: 1, fullName: 1, gender: 1, profilePicture: 1 }, // Project specific fields you need
+            },
           ],
           as: 'friendDetails',
         },
       },
       { $unwind: '$friendDetails' },
-      { $project: { _id: 0, friendDetails: 1 } },
+      { $replaceRoot: { newRoot: '$friendDetails' } }, // Replace the root with the friend details
     ]);
 
-    res.status(201).json({ friendsDetails });
+    res.status(201).json(friendsDetails); // Return the array of friend details directly
   } catch (err) {
-    res.status(500).json({ message: 'Internal Server Error', error: err.messsage });
+    res.status(500).json({ message: 'Internal Server Error', error: err.message });
     throw err;
   }
 };
@@ -132,4 +136,39 @@ export const rejectFriend = async (req, res) => {
   }
 };
 
-export const searchFriend = async (req, res) => {};
+export const searchFriend = async (req, res) => {
+  try {
+    const { keyword } = req.query;
+    // Get the logged-in user's ID
+    const loggedInUserId = req.user._id;
+
+    if (!keyword) {
+      return res.status(400).json({ message: 'Keyword is required' });
+    }
+
+    // Create a case-insensitive regular expression for the keyword
+    const regex = new RegExp(keyword, 'i');
+
+    // Search for users whose name matches the keyword
+    let friends = await User.find({
+      $or: [{ fullName: { $regex: regex } }, { username: { $regex: regex } }],
+      _id: { $ne: loggedInUserId },
+    }).select('_id fullName username gender profilePicture');
+
+    // Get the list of friends for the logged-in user
+    const friendships = await Friendship.find({
+      $or: [{ userId: loggedInUserId }, { friendId: loggedInUserId }],
+    });
+
+    // Create a set of friend IDs
+    const friendIds = new Set(friendships.map((f) => (f.userId.equals(loggedInUserId) ? f.friendId.toString() : f.userId.toString())));
+
+    // Filter out users who are already friends
+    friends = friends.filter((f) => !friendIds.has(f._id.toString()));
+
+    res.status(200).json(friends);
+  } catch (error) {
+    console.log('Error in searchFriend controller: ', error.message);
+    res.status(500).json({ message: error.message });
+  }
+};

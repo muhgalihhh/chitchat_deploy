@@ -1,5 +1,6 @@
 import User from '../models/user.model.js';
 import Friendship from '../models/friendship.model.js';
+import mongoose from 'mongoose';
 
 export const getUsersForSidebar = async (req, res) => {
   // try {
@@ -12,18 +13,13 @@ export const getUsersForSidebar = async (req, res) => {
   //   console.log('Error in getUsersForSidebar controller: ', error.message);
   //   res.status(500).json({ message: error.message });
   // }
-  const loggedInUserId = req.user._id; // Assuming you have middleware to set req.user
-
-  if (!mongoose.Types.ObjectId.isValid(loggedInUserId)) {
-    return res.status(400).json({ message: 'Invalid user ID' });
-  }
-
+  const userId = req.user._id;
   try {
-    const friends = await Friendship.aggregate([
+    const friendsDetails = await Friendship.aggregate([
       {
         $match: {
-          $or: [{ userId: mongoose.Types.ObjectId(loggedInUserId) }, { friendId: mongoose.Types.ObjectId(loggedInUserId) }],
-          status: true, // Only confirmed friends
+          $or: [{ userId: userId }, { friendId: userId }],
+          status: true,
         },
       },
       {
@@ -39,18 +35,22 @@ export const getUsersForSidebar = async (req, res) => {
               },
             },
             {
-              $match: { _id: { $ne: mongoose.Types.ObjectId(loggedInUserId) } }, // Exclude the logged-in user
+              $match: { _id: { $ne: userId } },
+            },
+            {
+              $project: { _id: 1, username: 1, fullName: 1, gender: 1, profilePicture: 1 }, // Project specific fields you need
             },
           ],
           as: 'friendDetails',
         },
       },
       { $unwind: '$friendDetails' },
-      { $project: { _id: 0, friendDetails: 1 } },
+      { $replaceRoot: { newRoot: '$friendDetails' } }, // Replace the root with the friend details
     ]);
 
-    res.status(200).json(friends);
+    res.status(201).json(friendsDetails); // Return the array of friend details directly
   } catch (err) {
-    res.status(500).json({ message: 'Internal server error', error: err.message });
+    res.status(500).json({ message: 'Internal Server Error', error: err.message });
+    throw err;
   }
 };
