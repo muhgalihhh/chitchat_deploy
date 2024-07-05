@@ -183,17 +183,13 @@ export const getRequestFriendship = async (req, res) => {
 
   try {
     const pendingRequests = await Friendship.find({
-      $or: [{ userId }, { friendId: userId }],
+      friendId: userId, // Logged in user is the friendId
       status: false,
-    }).populate('userId friendId', 'username fullName profilePicture'); // Adjust fields to populate as needed
+    }).populate('userId', 'username fullName profilePicture'); // Adjust fields to populate as needed
 
     // Filter to only include user info
     const users = pendingRequests.map((request) => {
-      if (request.userId._id.toString() === userId.toString()) {
-        return request.friendId;
-      } else {
-        return request.userId;
-      }
+      return request.userId;
     });
     res.json(users);
   } catch (error) {
